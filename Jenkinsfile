@@ -16,16 +16,17 @@ node {
         }
     }
 
+    def DOCKER_IMAGE_TAG = ${GIT_COMMIT}
     def DOCKER_HUB_ACCOUNT = 'snhuber'
     def DOCKER_IMAGE_NAME = 'go-example-webserver'
 
     echo 'Building Docker image'
     stage('BuildImage')
-    def app = docker.build("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}", '.')
+    def app = docker.build("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}", '.')
 
     echo 'Testing Docker image'
     stage("test image") {
-        docker.image("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}").inside {
+        docker.image("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").inside {
             sh './test.sh'
         }
     }
@@ -42,7 +43,7 @@ node {
     echo "Deploying image"
     docker.image('smesch/kubectl').inside{
         withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-            sh "kubectl --kubeconfig=$KUBECONFIG set image deployment/${K8S_DEPLOYMENT_NAME} ${K8S_DEPLOYMENT_NAME}=${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}"
+            sh "kubectl --kubeconfig=$KUBECONFIG set image deployment/${K8S_DEPLOYMENT_NAME} ${K8S_DEPLOYMENT_NAME}=${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
         }
     }
 
