@@ -29,5 +29,11 @@ node {
             sh './test.sh'
         }
     }
-    
+
+    stage("Push")
+    echo 'Pushing Docker Image'
+    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub') {
+        app.push()
+    }
+
 }
