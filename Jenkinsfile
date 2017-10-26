@@ -16,7 +16,7 @@ node {
         }
     }
 
-    def DOCKER_IMAGE_TAG = ${GIT_COMMIT}
+    def DOCKER_IMAGE_TAG = '${GIT_COMMIT}'
     def DOCKER_HUB_ACCOUNT = 'snhuber'
     def DOCKER_IMAGE_NAME = 'go-example-webserver'
 
