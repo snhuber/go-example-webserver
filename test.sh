@@ -5,7 +5,7 @@ set -eu
 ID=$! # ID of webserver process, so we can kill it
 
 tests_passed=true
-expected="Hello From Golang - Hello To Golang"
+expected="Hello From Golang - Hello To Golang!"
 output=$(curl -s localhost:8080)
 if [[ "$expected" != "$output" ]]; then
   echo "Test Failure"
